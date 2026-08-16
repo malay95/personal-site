@@ -87,31 +87,43 @@ git push
 
 ## Custom domain (GitHub Pages + Cloudflare DNS)
 
-The `CNAME` file in this repo must contain your apex domain on a single line, e.g.
-`malayshah.dev`. Then in Cloudflare DNS add:
+The site is served at **https://aboutme.malaysshah.com**. The `CNAME` file in this repo
+holds that hostname on a single line; deleting it disconnects the domain.
 
-| Type  | Name | Value                  |
-|-------|------|------------------------|
-| A     | @    | 185.199.108.153        |
-| A     | @    | 185.199.109.153        |
-| A     | @    | 185.199.110.153        |
-| A     | @    | 185.199.111.153        |
-| AAAA  | @    | 2606:50c0:8000::153    |
-| AAAA  | @    | 2606:50c0:8001::153    |
-| AAAA  | @    | 2606:50c0:8002::153    |
-| AAAA  | @    | 2606:50c0:8003::153    |
-| CNAME | www  | malay95.github.io      |
+Because this is a **subdomain**, DNS is a single record. The four A records GitHub
+documents are only for apex domains (`malaysshah.com` with no prefix) and are not used
+here.
 
-(Values confirmed against GitHub's custom-domain docs, August 2026.)
+In Cloudflare DNS for `malaysshah.com`:
 
-Set the proxy status to **DNS only** (grey cloud) until GitHub finishes issuing the TLS
-certificate, otherwise the validation fails. Then in the repo: Settings → Pages → enter
-the domain → tick **Enforce HTTPS**.
+| Type  | Name    | Value               | Proxy    |
+|-------|---------|---------------------|----------|
+| CNAME | aboutme | malay95.github.io   | DNS only |
 
-Verify the current IPs against GitHub's docs before trusting the table above; they change
-rarely but they do change.
+`malay95.github.io` is correct even though the repo is `personal-site`: the CNAME target
+is always your GitHub user domain, never the repository.
 
-## Before going live
+Keep the proxy **DNS only** (grey cloud) until GitHub finishes issuing the TLS
+certificate, otherwise validation fails. Once HTTPS works you may switch the proxy on,
+but only with Cloudflare SSL mode set to **Full** — Flexible causes a redirect loop
+against Pages.
 
-- Replace `REPLACE-WITH-YOUR-DOMAIN` in `index.html` and `projects.html`
-  (`canonical` and `og:url`, two occurrences per file).
+Then in the repo: Settings → Pages → Custom domain → `aboutme.malaysshah.com` → tick
+**Enforce HTTPS** once the certificate is provisioned (can take up to an hour).
+
+### Checking it
+
+```powershell
+nslookup aboutme.malaysshah.com          # should resolve via malay95.github.io
+curl -I https://aboutme.malaysshah.com   # expect 200
+```
+
+## If you later want the apex too
+
+To serve `malaysshah.com` itself, add these at the apex and change `CNAME` to match
+(values from GitHub's custom-domain docs, verified August 2026):
+
+| Type | Name | Value                                       |
+|------|------|---------------------------------------------|
+| A    | @    | 185.199.108.153 … .109 … .110 … .111        |
+| AAAA | @    | 2606:50c0:8000::153 … 8001 … 8002 … 8003    |
