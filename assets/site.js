@@ -82,10 +82,12 @@
 
     if (p.result) parts.push(el("p", { class: "result", text: p.result }));
 
-    if (p.tags && p.tags.length) {
-      var tags = el("div", { class: "tags" });
-      p.tags.forEach(function (t) { tags.appendChild(el("i", { text: t })); });
-      parts.push(tags);
+    // Chips show `tech` (the concrete stack). `tags` are the coarse themes that
+    // drive the filter bar, and are deliberately not repeated on the card.
+    if (p.tech && p.tech.length) {
+      var tech = el("div", { class: "tags" });
+      p.tech.forEach(function (t) { tech.appendChild(el("i", { text: t })); });
+      parts.push(tech);
     }
 
     if (p.links && p.links.length) {

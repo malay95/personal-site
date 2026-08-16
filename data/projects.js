@@ -40,7 +40,13 @@ window.SITE = {
        summary   one or two sentences, what it is and why it exists
        points    optional bullets: the interesting engineering details
        result    optional measured outcome. Numbers only, no adjectives.
-       tags      lowercase. These generate the filter buttons automatically.
+       tags      COARSE themes, and only these. They generate the filter buttons,
+                 so keep the vocabulary small or the filter bar stops being usable.
+                 In use: "llm inference", "agents", "rag", "evaluation",
+                 "distributed systems", "mlops", "platform", "self-hosted", "research".
+                 Reuse an existing one before inventing a new one.
+       tech      the concrete stack, shown as chips on the card. Be as specific as
+                 you like here: this list is display-only and never filtered.
        links     [{ label, href }]. Omit or leave [] if there is nothing public yet.
      ====================================================================== */
   projects: [
@@ -59,7 +65,8 @@ window.SITE = {
         "Every milestone is benchmarked against the same prompts, seed, and token budget, so each claimed speedup is measured rather than asserted.",
       ],
       result: "M0 sequential baseline measured: 21.4 tok/s at concurrency 1, 31.1 tok/s at concurrency 8 with p99 5.6x worse, isolating the serialization cliff that batching is meant to remove. Batching and paging milestones in progress.",
-      tags: ["llm inference", "gpu", "systems", "python", "benchmarking"],
+      tags: ["llm inference", "distributed systems"],
+      tech: ["Python", "PyTorch", "CUDA", "FastAPI", "paged KV cache", "continuous batching"],
       links: [],
     },
 
@@ -76,7 +83,8 @@ window.SITE = {
         "Two deployment targets on purpose: Vertex AI Agent Engine for the managed runtime, and GKE Autopilot with Workload Identity for the Kubernetes path.",
         "Terraform for infrastructure, Helm for the cluster workload, and an evaluation harness so agent changes are scored instead of eyeballed.",
       ],
-      tags: ["agents", "gcp", "kubernetes", "rag", "evaluation", "terraform"],
+      tags: ["agents", "rag", "evaluation", "distributed systems"],
+      tech: ["Python", "Google ADK", "GCP", "GKE", "Vertex AI", "Terraform", "Helm"],
       links: [],
     },
 
@@ -93,7 +101,8 @@ window.SITE = {
         "Postgres-in-WASM (PGlite) through Drizzle ORM, persisted locally, which keeps the whole stack runnable without a database server.",
         "An MCP bridge exposes the tracker API to external assistants under a separately scoped key.",
       ],
-      tags: ["agents", "mcp", "next.js", "python", "full stack"],
+      tags: ["agents"],
+      tech: ["Next.js", "React", "TypeScript", "Python", "Google ADK", "MCP", "PGlite", "Drizzle"],
       links: [],
     },
 
@@ -108,7 +117,8 @@ window.SITE = {
         "Automated phone-to-server backup for both iOS and Android, with scripted health and disk-usage checks.",
         "Scheduled backup to a second drive, plus a documented path to remote access over Tailscale.",
       ],
-      tags: ["self-hosted", "docker", "infrastructure", "linux"],
+      tags: ["self-hosted"],
+      tech: ["Docker", "WSL2", "Immich", "PowerShell", "Linux"],
       links: [],
     },
 
@@ -125,7 +135,8 @@ window.SITE = {
         "Multi-step chains orchestrated with LangChain and n8n, scaled for sophisticated financial reasoning.",
       ],
       result: "sub-5s end-to-end inference; hallucinations eliminated on grounded paths",
-      tags: ["agents", "rag", "grounding", "langchain", "opensearch"],
+      tags: ["agents", "rag"],
+      tech: ["Python", "LangChain", "n8n", "OpenSearch", "AWS Bedrock"],
       links: [],
     },
 
@@ -138,7 +149,8 @@ window.SITE = {
       featured: true,
       summary: "A framework that lets any engineering team bootstrap a new LLM agent with evaluation and observability already wired in, turning agent setup from a multi-week project into a template instantiation.",
       result: "weeks to minutes for a working, instrumented agent; became the default path for new agent development org-wide",
-      tags: ["agents", "platform", "evaluation", "observability"],
+      tags: ["agents", "evaluation", "platform"],
+      tech: ["Python", "LangChain", "observability tooling"],
       links: [],
     },
 
@@ -151,7 +163,8 @@ window.SITE = {
       featured: true,
       summary: "Led the design of the company's LLM evaluation platform and authored the technical standards teams benchmark against for retrieval performance and grounding accuracy, giving the organization one shared definition of whether a model change is an improvement.",
       result: "org-wide benchmarking standard for RAG and grounding",
-      tags: ["evaluation", "rag", "platform", "standards"],
+      tags: ["evaluation", "rag", "platform"],
+      tech: ["Python", "LLM-as-judge", "benchmark harnesses"],
       links: [],
     },
 
@@ -166,7 +179,8 @@ window.SITE = {
         "SageMaker endpoints backed by a custom feature store enabling repeat-model predictions.",
       ],
       result: "5x throughput; timeouts 25% to 5%; +2% production model accuracy",
-      tags: ["mlops", "ocr", "sagemaker", "distributed", "aws"],
+      tags: ["mlops", "distributed systems"],
+      tech: ["Python", "SageMaker", "feature store", "AWS Batch", "Step Functions", "quantization"],
       links: [],
     },
 
@@ -178,7 +192,8 @@ window.SITE = {
       status: "research",
       summary: "Deployed Qwen 3.5 7B locally via MLX server to study serving mechanics hands-on, tuning the configuration for a measurable cost and evaluation lift over the vanilla model. Ongoing comparative work across MLX, vLLM, and SGLang.",
       result: "~15 bps cost and eval lift over baseline",
-      tags: ["llm inference", "mlx", "quantization", "benchmarking"],
+      tags: ["llm inference", "research"],
+      tech: ["MLX", "Qwen 3.5 7B", "quantization"],
       links: [],
     },
 
@@ -190,7 +205,8 @@ window.SITE = {
       status: "archived",
       summary: "Compared multivariate linear regression, ARIMA, RNN, and hidden Markov models for forecasting campus parking availability. Feature engineering mattered more than model choice: the 32-feature linear model won.",
       result: "RMS error 7.43",
-      tags: ["machine learning", "time series", "python"],
+      tags: ["research"],
+      tech: ["Python", "scikit-learn", "ARIMA", "RNN", "HMM"],
       links: [
         { label: "Code", href: "https://github.com/malay95/Parking-Spot-Prediction" },
       ],

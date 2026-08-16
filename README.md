@@ -30,15 +30,22 @@ Open `data/projects.js`, copy an existing block in `SITE.projects`, fill it in.
     "A thing that was hard and how it works.",
   ],
   result: "Measured outcome. Numbers, not adjectives.",   // optional
-  tags: ["llm inference", "python"],   // lowercase; these become filter buttons
+  tags: ["llm inference"],         // coarse theme(s); these become filter buttons
+  tech: ["Python", "PyTorch"],     // concrete stack; display-only chips
   links: [
     { label: "Code", href: "https://github.com/malay95/my-new-thing" },
   ],
 },
 ```
 
-Nothing else to touch. New tags become filter buttons automatically, the count updates
-itself, and `featured: true` is what promotes it to the home page.
+Nothing else to touch. The count updates itself and `featured: true` is what promotes it
+to the home page.
+
+Keep `tags` coarse. They are the filter buttons, so the vocabulary has to stay short:
+`llm inference`, `agents`, `rag`, `evaluation`, `distributed systems`, `mlops`,
+`platform`, `self-hosted`, `research`. Reuse one before adding another. Everything
+specific (languages, frameworks, services) belongs in `tech`, which is display-only and
+can be as detailed as you want.
 
 Order in the file is the order on the page. Put the thing you most want seen first.
 
