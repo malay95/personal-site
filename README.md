@@ -1,69 +1,106 @@
-# Personal site
+# Personal site, v2
 
 Static site, no build step, no dependencies. Hosted on GitHub Pages, DNS through Cloudflare.
+Same rules as v1: edit data, commit, push.
 
 ```
-index.html         home page
-projects.html      the project entrypoint (filterable, renders from data)
-data/projects.js   >>> the only file you normally edit <<<
-assets/site.css    all styling, tokens at the top
-assets/site.js     rendering (nav, contact, project cards, filters)
+index.html         home: hero, metrics, latest writing, selected work, experience, stack, papers
+writing.html       the post index
+post.html          renders one post from markdown (post.html?p=<slug>)
+projects.html      filterable project list
+about.html         longer bio
+now.html           what has my attention this month
 404.html           not-found page
-.nojekyll          tells Pages to serve files as-is, no Jekyll processing
-CNAME              your custom domain, one line
+data/site.js       >>> the file you normally edit <<<  (nav, hero, now, posts index, projects)
+posts/*.md         one markdown file per post
+assets/site.css    all styling, tokens at the top
+assets/site.js     rendering (masthead, theme toggle, lists, filters, post page, reveals)
+assets/md.js       the small markdown renderer
 ```
+
+## The Writing section is built but switched off
+
+`writing.html`, `post.html`, the markdown renderer, and four post files are all in the
+repo and working, but **Writing is not in the tab bar and the home page does not link
+posts**. The three drafts still say "Draft. Replace this paragraph with the post.", and
+`paged-kv-cache-by-hand.md` narrates a paged KV cache and a p99 result that
+`mini-inference-server` has not measured yet (its BENCHMARKS.md still lists M3 as TBD).
+
+To turn the section on once you have written something real:
+
+1. Uncomment the `Writing` line in `SITE.nav` in `data/site.js`.
+2. Uncomment `<section data-recent-posts></section>` in `index.html`, and bump the
+   section numerals in `assets/site.js` back to `02`-`06`.
+3. Drop the `noindex` meta tags from `writing.html` and `post.html`.
+
+## Add a blog post
+
+Two steps.
+
+1. Write `posts/my-new-post.md`, starting with front matter:
+
+```markdown
+---
+title: My New Post
+date: Sep 2026
+read: 8 min
+kind: notes
+standfirst: One sentence that makes someone want to read it.
+tags: [llm inference, benchmarks]
+---
+
+Body starts here.
+```
+
+2. Add a block to the **top** of `SITE.posts` in `data/site.js` (newest first):
+
+```js
+{ slug: "my-new-post", title: "My New Post", date: "Sep 2026", read: "8 min", kind: "notes",
+  blurb: "One sentence for the index page.", tags: ["llm inference"] },
+```
+
+The slug must match the filename. `kind` is a free-text label shown as a chip
+(`notes`, `essay`, `deep dive`). Order in the array is the order on the page, and
+prev/next on the post page follows it.
+
+### What the markdown supports
+
+`# ## ###` headings, paragraphs, `- lists`, `> quotes`, fenced code blocks with
+``````, inline ``code``, `**bold**`, `*italic*`, `[links](https://example.com)`,
+footnotes as `[^1]` in the text with `[^1]: the note` at the bottom, and a callout:
+
+```markdown
+:::note
+The line you want in a highlighted box.
+:::
+```
+
+Anything fancier than that is not supported on purpose. `assets/md.js` is ~120 lines
+and easy to extend if you need one more thing.
 
 ## Add a project
 
-Open `data/projects.js`, copy an existing block in `SITE.projects`, fill it in.
-
-```js
-{
-  slug: "my-new-thing",           // unique, kebab-case, used for #deep-links
-  title: "My New Thing",
-  org: "Personal",                // or "BILL", "ASU", ...
-  period: "2026, ongoing",
-  status: "active",               // active | shipped | research | archived
-  featured: true,                 // true also puts it on the home page
-  summary: "One or two sentences: what it is and why it exists.",
-  points: [                       // optional, the interesting engineering details
-    "A thing that was hard and how it works.",
-  ],
-  result: "Measured outcome. Numbers, not adjectives.",   // optional
-  tags: ["llm inference"],         // coarse theme(s); these become filter buttons
-  tech: ["Python", "PyTorch"],     // concrete stack; display-only chips
-  links: [
-    { label: "Code", href: "https://github.com/malay95/my-new-thing" },
-  ],
-},
-```
-
-Nothing else to touch. The count updates itself and `featured: true` is what promotes it
-to the home page.
-
-Keep `tags` coarse. They are the filter buttons, so the vocabulary has to stay short:
-`llm inference`, `agents`, `rag`, `evaluation`, `distributed systems`, `mlops`,
-`platform`, `self-hosted`, `research`. Reuse one before adding another. Everything
-specific (languages, frameworks, services) belongs in `tech`, which is display-only and
-can be as detailed as you want.
-
-Order in the file is the order on the page. Put the thing you most want seen first.
-
-**Leave `links: []` if the repo is private.** The card renders fine without links, and an
-empty list is better than a 404 in front of a hiring manager.
+Unchanged from v1: copy a block in `SITE.projects` in `data/site.js`. `featured: true`
+also puts it on the home page. Keep `tags` coarse (they are the filter buttons);
+put specifics in `tech`, which is display-only.
 
 ## Add a tab
 
-Two steps:
+Add a line to `SITE.nav`, then copy `now.html` to the new filename and replace the
+`<main>` contents. The masthead, tabs, active-tab state, and footer come from data.
 
-1. Add a line to `SITE.nav` in `data/projects.js`:
-   ```js
-   { label: "Writing", href: "writing.html" },
-   ```
-2. Copy `projects.html` to `writing.html` and replace the `<main>` contents.
+## Theme
 
-The rail, tabs, contact links, and active-tab highlight all render from the data file,
-so every page picks up the new tab with no further edits.
+Three states, cycled by the button in the tab bar and remembered in `localStorage`:
+`AUTO` (follows the OS), `LIGHT`, `DARK`. Tokens for all three live at the top of
+`assets/site.css` — change a hex there and it changes everywhere.
+
+## Motion
+
+Entrance animations use CSS only. Scroll reveals use scroll-driven animations
+(`animation-timeline: view()`) where the browser supports them, and an
+IntersectionObserver fallback in `site.js` where it does not. Everything is disabled
+under `prefers-reduced-motion`.
 
 ## Preview locally
 
@@ -72,8 +109,8 @@ python -m http.server 8000
 # then open http://localhost:8000
 ```
 
-Use the server rather than double-clicking the file: opening `index.html` straight from
-disk works here, but the server matches how Pages actually serves it.
+Use the server, not the file directly: `post.html` `fetch()`es the markdown, and
+`file://` blocks that.
 
 ## Deploy
 
@@ -81,7 +118,7 @@ Push to `main`. GitHub Pages rebuilds in under a minute.
 
 ```powershell
 git add -A
-git commit -m "Add project X"
+git commit -m "Add post X"
 git push
 ```
 

@@ -1,53 +1,107 @@
 /* ==========================================================================
-   SITE DATA — this is the only file you need to edit for day-to-day updates.
-   Adding a project? Copy a block in SITE.projects and fill it in.
-   Adding a tab?     Add a line to SITE.nav and create the matching .html page.
-   No build step, no dependencies. Save, commit, push. GitHub Pages does the rest.
+   SITE DATA - the only file you normally edit.
+   Adding a project?  copy a block in SITE.projects.
+   Adding a post?     drop posts/<slug>.md and add a block to SITE.posts (top = newest).
+   Adding a tab?      add a line to SITE.nav and create the matching .html page.
+   No build step, no dependencies. Save, commit, push.
    ========================================================================== */
 
 window.SITE = {
 
-  /* ---- tabs in the left rail, rendered on every page ------------------- */
+  /* ---- tabs, rendered on every page ----------------------------------- */
   nav: [
     { label: "Home",     href: "index.html" },
+    // Writing is built and ready. Uncomment this line the day posts/ holds a post
+    // you actually wrote -- see the three drafts in posts/ waiting for content.
+    // { label: "Writing",  href: "writing.html" },
     { label: "Projects", href: "projects.html" },
-    // Add a tab:
-    // { label: "Writing", href: "writing.html" },
-    // Sub-links to a section on a page use `sub: true`:
-    // { label: "Experience", href: "index.html#experience", sub: true },
+    { label: "About",    href: "about.html" },
+    { label: "Now",      href: "now.html" },
   ],
 
-  /* ---- who + where to reach you --------------------------------------- */
   contact: [
     { label: "Email",    text: "malayshah781@gmail.com", href: "mailto:malayshah781@gmail.com" },
     { label: "GitHub",   text: "malay95",                href: "https://github.com/malay95" },
     { label: "LinkedIn", text: "msshah11",               href: "https://linkedin.com/in/msshah11" },
   ],
 
-  /* ======================================================================
-     PROJECTS
+  /* ---- home hero. `lede` allows one <span class="mark"> highlight ------ */
+  hero: {
+    lede: 'I build the infrastructure that makes language models <span class="mark">useful in production</span> \u2014 agent frameworks, retrieval and grounding, and the layers that decide what actually ships.',
+    sub: "Eight years across machine learning and platform engineering, the last five at BILL, where I went from ML engineer to staff engineer building AI systems for financial workflows. Evenings I am rebuilding inference from the bottom up on a 6 GB GPU, mostly to find out what I only thought I understood.",
+  },
 
-     Field reference
-       slug      unique id, kebab-case. Used for deep links (#slug).
-       title     what it is called
-       org       where it happened: "BILL", "Personal", "ASU"
-       period    free text: "2025", "2024-2025", "ongoing"
-       status    "active"   — building it right now
-                 "shipped"  — done and in use
-                 "research" — study / experiment / paper
-                 "archived" — finished, not maintained
-       featured  true puts it on the home page too
-       summary   one or two sentences, what it is and why it exists
-       points    optional bullets: the interesting engineering details
-       result    optional measured outcome. Numbers only, no adjectives.
-       tags      COARSE themes, and only these. They generate the filter buttons,
-                 so keep the vocabulary small or the filter bar stops being usable.
-                 In use: "llm inference", "agents", "rag", "evaluation",
-                 "distributed systems", "mlops", "platform", "self-hosted", "research".
-                 Reuse an existing one before inventing a new one.
-       tech      the concrete stack, shown as chips on the card. Be as specific as
-                 you like here: this list is display-only and never filtered.
-       links     [{ label, href }]. Omit or leave [] if there is nothing public yet.
+  /* ---- "Now" page + the ticker line on the home page ------------------- */
+  now: [
+    { label: "Building", text: "mini-inference-server \u2014 continuous batching milestone, chasing the p99 tail." },
+    { label: "Reading", text: "Designing Data-Intensive Applications, again, slower this time." },
+    { label: "Learning", text: "CUDA properly, rather than by copying kernels that already work." },
+    { label: "Away from screens", text: "Getting the house ready for a very small new arrival." },
+  ],
+
+  metrics: [
+    { big: "5\u00d7", note: "Document processing throughput, enterprise OCR system" },
+    { big: "<5s", note: "End-to-end agent inference over structured + unstructured data" },
+    { big: "25% \u2192 5%", note: "Processing timeouts after infra tuning and quantization" },
+    { big: "Org-wide", note: "Adoption of the agent scaffolding and evaluation platform" },
+  ],
+
+  /* ---- writing index. Newest first; each slug needs posts/<slug>.md ---- */
+  posts: [
+    { slug: "paged-kv-cache-by-hand", title: "Writing a paged KV cache by hand", date: "Aug 2026", read: "12 min", kind: "deep dive",
+      blurb: "What virtual memory taught me about attention caches, and the three bugs that only show up above concurrency four.",
+      tags: ["llm inference", "cuda", "benchmarks"] },
+    { slug: "benchmarks-you-can-trust", title: "Benchmarks you can actually trust", date: "Jul 2026", read: "7 min", kind: "notes",
+      blurb: "Same prompts, same seed, same token budget. A short checklist I run before I let myself claim a speedup.",
+      tags: ["benchmarks"] },
+    { slug: "critic-loops", title: "Critic loops beat bigger models", date: "Jun 2026", read: "9 min", kind: "essay",
+      blurb: "A cheap verifier that sends weak drafts back did more for grounding accuracy than any model upgrade I tried.",
+      tags: ["agents", "evaluation"] },
+    { slug: "six-gb-gpu", title: "Everything I learned from a 6 GB GPU", date: "May 2026", read: "6 min", kind: "notes",
+      blurb: "Constraints as a teaching tool: quantization, batching, and the moment memory fragmentation stops being abstract.",
+      tags: ["llm inference"] },
+  ],
+
+  roles: [
+    { when: "2025 \u2014 now", title: "Staff Software Engineer", org: "\u00b7 BILL", body: "Agent frameworks, RAG and grounding systems, the evaluation platform, and the OCR extraction stack behind financial document workflows." },
+    { when: "2023 \u2014 2024", title: "Senior Software Engineer", org: "\u00b7 BILL", body: "Document-processing latency and reliability, SageMaker serving with a custom feature store, and AI-driven spend and expense automation rolled out in phases." },
+    { when: "2021 \u2014 2023", title: "Machine Learning Engineer", org: "\u00b7 BILL", body: "Python MLOps pipelines moving document-extraction models from research into high-availability production, plus automated feature engineering for financial datasets." },
+    { when: "2018 \u2014 2021", title: "AI Solutions Architect", org: "\u00b7 CYR3CON", body: "Led a team building production CI/CD and AWS Batch pipelines for feature extraction and large-scale model training, and modeled vulnerability-exploitation patterns with NLP and entity recognition." },
+    { when: "2013 \u2014 2019", title: "M.S. Computer Science", org: "\u00b7 Arizona State University", body: "B.E. Computer Science & Engineering, Nirma Institute of Technology, Ahmedabad." },
+  ],
+
+  langs: [
+    { name: "Python", pct: 96, level: "primary" },
+    { name: "SQL", pct: 82, level: "daily" },
+    { name: "Bash", pct: 74, level: "daily" },
+  ],
+
+  stack: [
+    { title: "LLM & agents", body: "LangChain, Google ADK, MCP, n8n, RAG, vector stores, grounding and hallucination mitigation, LLM-as-judge evaluation, multi-provider routing." },
+    { title: "Inference & serving", body: "MLX, vLLM, SGLang, self-hosted open-weight models, paged KV cache, continuous batching, INT8/INT4 quantization." },
+    { title: "ML & MLOps", body: "SageMaker, feature stores, MLflow, OCR and vision-language models, TensorFlow, Keras, CI/CD, Pytest, TDD." },
+    { title: "Distributed & cloud", body: "AWS Batch, Step Functions, Fargate, ECS, Lambda, SQS, S3, Bedrock, CloudWatch; GCP with GKE and Vertex AI; Terraform, Docker; OpenSearch and Elasticsearch." },
+    { title: "Data", body: "PostgreSQL, MySQL, MongoDB, Linux." },
+  ],
+
+  pubs: [
+    { title: "Object Detection using Deep Neural Networks", meta: "IEEE Xplore, 2017 \u00b7 first author \u00b7 custom inception network, 10% top-5 error on ImageNet" },
+    { title: "Finding Cryptocurrency Attack Indicators Using Temporal Logic and Dark Web Data", meta: "IEEE, 2018 \u00b7 co-author" },
+    { title: "A Hybrid KRR-ML Approach to Predict Malicious Email Campaigns", meta: "ASONAM, 2019 \u00b7 co-author \u00b7 +14% recall over the ML-only baseline" },
+  ],
+
+  facts: [
+    { label: "ROLE", text: "Staff Software Engineer, AI Platform & LLM Infrastructure at BILL" },
+    { label: "BASED", text: "San Jose, California" },
+    { label: "DEPTH", text: "Eight years across ML and platform engineering" },
+    { label: "DEGREES", text: "M.S. Computer Science, Arizona State University" },
+    { label: "REACH ME", text: "malayshah781@gmail.com" },
+  ],
+
+  /* ======================================================================
+     PROJECTS - field reference is unchanged from v1:
+       slug title org period status(active|shipped|research|archived)
+       featured summary points[] result tags[] tech[] links[{label,href}]
      ====================================================================== */
   projects: [
 
@@ -64,7 +118,7 @@ window.SITE = {
         "Continuous batching: requests admitted and evicted at the token level rather than per batch, so the GPU never idles behind the slowest sequence.",
         "Every milestone is benchmarked against the same prompts, seed, and token budget, so each claimed speedup is measured rather than asserted.",
       ],
-      result: "M0 sequential baseline measured: 21.4 tok/s at concurrency 1, 31.1 tok/s at concurrency 8 with p99 5.6x worse, isolating the serialization cliff that batching is meant to remove. Batching and paging milestones in progress.",
+      result: "M0 sequential baseline measured: 21.4 tok/s at concurrency 1, 31.1 tok/s at concurrency 8 with p99 5.6x worse, isolating the serialization cliff that batching is meant to remove.",
       tags: ["llm inference", "distributed systems"],
       tech: ["Python", "PyTorch", "CUDA", "FastAPI", "paged KV cache", "continuous batching"],
       links: [],
