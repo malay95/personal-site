@@ -26,7 +26,11 @@ window.SITE = {
   ],
 
   /* ---- home hero. `lede` allows one <span class="mark"> highlight ------ */
+  /* `portrait` is optional. Drop the file at the path below and it appears;
+     if the file is missing the figure removes itself and the hero reflows.
+     Shot is cropped to 4:5, so supply something close to that (e.g. 640x800). */
   hero: {
+    portrait: { src: "assets/img/malay.jpg", alt: "Malay Shah at a mountain overlook", width: 800, height: 1000, eager: true },
     lede: 'I build the infrastructure that makes language models <span class="mark">useful in production</span> \u2014 agent frameworks, retrieval and grounding, and the layers that decide what actually ships.',
     sub: "Eight years across machine learning and platform engineering, the last five at BILL, where I went from ML engineer to staff engineer building AI systems for financial workflows. Evenings I am rebuilding inference from the bottom up on a 6 GB GPU, mostly to find out what I only thought I understood.",
   },
@@ -113,6 +117,10 @@ window.SITE = {
       status: "active",
       featured: true,
       summary: "An LLM inference server written from scratch that reimplements the core ideas behind vLLM and TGI at small scale: an HTTP serving API, a paged KV cache, and continuous in-flight batching, benchmarked on a 6 GB consumer GPU with no tensor cores.",
+      /* Optional. A still or a looping GIF - a terminal recording of tokens
+         streaming, or a benchmark plot, both read well here. Add `wide: true`
+         to let it span the full card width. Missing file = figure is dropped. */
+      media: { src: "assets/img/mini-inference-server.gif", alt: "Tokens streaming from the inference server under continuous batching", caption: "M0 baseline: tokens streaming at concurrency 8." },
       points: [
         "Paged KV cache: attention keys and values stored in fixed-size blocks like OS virtual memory pages, so many requests share GPU memory without fragmentation.",
         "Continuous batching: requests admitted and evicted at the token level rather than per batch, so the GPU never idles behind the slowest sequence.",

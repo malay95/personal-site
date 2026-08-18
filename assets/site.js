@@ -75,20 +75,50 @@
     return el("div", { class: "sec-head" }, kids);
   }
 
+  /* Images are optional everywhere. If a file is missing or fails to decode we
+     drop the whole figure rather than leaving a broken-image glyph on the page. */
+  function figure(spec, className, onFail) {
+    if (!spec || !spec.src) return null;
+    /* Above-the-fold images load eagerly; a lazy one that is offscreen never
+       requests, so its `error` never fires and we could not clean it up. */
+    var img = el("img", {
+      src: spec.src, alt: spec.alt || "",
+      loading: spec.eager ? "eager" : "lazy", decoding: "async",
+    });
+    if (spec.width) img.setAttribute("width", spec.width);
+    if (spec.height) img.setAttribute("height", spec.height);
+    var fig = el("figure", { class: className }, [img]);
+    if (spec.caption) fig.appendChild(el("figcaption", { text: spec.caption }));
+    /* The frame and caption only appear once pixels actually arrive, so a lazy
+       image that has not been scrolled to yet takes up no visual space at all. */
+    img.addEventListener("load", function () { fig.className += " is-loaded"; });
+    img.addEventListener("error", function () { fig.remove(); if (onFail) onFail(); });
+    return fig;
+  }
+
   /* ---- home: hero, metrics, posts, work, roles, stack, pubs ------------- */
   function renderHero() {
     var mount = q("[data-hero]");
     if (!mount || !SITE.hero) return;
-    mount.className = "hero";
+    /* If the portrait fails we drop back to the single-column hero, otherwise
+       the grid keeps an empty column and the text stays needlessly narrow. */
+    var portrait = figure(SITE.hero.portrait, "portrait", function () {
+      mount.className = "hero";
+    });
+    mount.className = portrait ? "hero hero--portrait" : "hero";
     mount.textContent = "";
-    mount.appendChild(el("p", { class: "lede", "data-enter": "4", html: SITE.hero.lede }));
-    mount.appendChild(el("p", { class: "sub", text: SITE.hero.sub }));
+
+    var text = el("div", { class: "hero-main" });
+    text.appendChild(el("p", { class: "lede", "data-enter": "4", html: SITE.hero.lede }));
+    text.appendChild(el("p", { class: "sub", text: SITE.hero.sub }));
     if (SITE.now && SITE.now.length) {
-      mount.appendChild(el("div", { class: "nowline" }, [
+      text.appendChild(el("div", { class: "nowline" }, [
         el("span", { class: "dot" }),
         el("span", { text: "Currently: " + SITE.now[0].text }),
       ]));
     }
+    mount.appendChild(text);
+    if (portrait) mount.appendChild(portrait);
   }
 
   function renderMetrics() {
@@ -134,6 +164,10 @@
       el("span", { class: "where", text: [p.org, p.period].filter(Boolean).join(" \u00b7 ") }),
     ]);
     var parts = [top, el("p", { text: p.summary })];
+    /* A still or a looping GIF. Sits under the summary so the card still reads
+       as prose first; `media.wide` lets a screenshot span the card edge to edge. */
+    var media = figure(p.media, "card-media" + (p.media && p.media.wide ? " card-media--wide" : ""));
+    if (media) parts.push(media);
     if (!compact && p.points && p.points.length) {
       var ul = el("ul", { class: "points" });
       p.points.forEach(function (pt) { ul.appendChild(el("li", { text: pt })); });
